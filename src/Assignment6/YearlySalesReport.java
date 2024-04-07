@@ -32,16 +32,21 @@ public class YearlySalesReport {
 		System.out.println("---------------------------");
 		// How to turn this For loop into STREAMS?
 		for (int i = 2016; i <2020;i++) { // LOOP 2016, 2017, 2018, 2019, 2020
-			int sales = 0; //Each loop will restart sales to 0
-			for (TeslaSalesData eachLine : fileData) { //for each object in TeslaSalesData
-				//get Sales $ total, add to Year List
-				YearMonth date = YearMonth.parse(eachLine.getDate(),dateFormatter);//Turn the String Date, into a date format and check the year
-				if (date.getYear()==i) {//if the year Matches i, then add the sales from that year to the total sales
-					sales=eachLine.getSales();
-				}
-			}
+//			int sales = 0; //Each loop will restart sales to 0
+//			for (TeslaSalesData eachLine : fileData) { //for each object in TeslaSalesData
+//				//get Sales $ total, add to Year List
+//				YearMonth date = YearMonth.parse(eachLine.getDate(),dateFormatter);//Turn the String Date, into a date format and check the year
+//				if (date.getYear()==i) {//if the year Matches i, then add the sales from that year to the total sales
+//					sales=eachLine.getSales();
+//				}
+//			}
+			int year = i;
+			 int sales = fileData.stream()
+                     			 .filter(data -> YearMonth.parse(data.getDate(), dateFormatter).getYear() == year)
+                     			 .mapToInt(TeslaSalesData::getSales)
+                     			 .sum();
 			if (sales > 0) { //This is to not display any year with no sales
-				System.out.println(i +" -> " + currencyFormatter.format(sales));
+				System.out.println(year +" -> " + currencyFormatter.format(sales));
 			}
 		}
 		
